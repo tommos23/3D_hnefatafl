@@ -64,10 +64,8 @@ public class PlayerControls : MonoBehaviour {
                     if (_hitInfo.collider.gameObject.tag == ("Cube"))
                     {
                         selectedCoord = new Vector3(_hitInfo.collider.gameObject.transform.position.x, 1, _hitInfo.collider.gameObject.transform.position.z);
-                        if (_GameManager.MovePiece(selectedCoord))
-                        {
-                            _GameManager.ChangeState(0);
-                        }                     
+                        _GameManager.MovePiece(selectedCoord);
+                        _GameManager.ChangeState(0);                    
                     }
                 }
             }
