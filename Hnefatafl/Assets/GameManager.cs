@@ -1,22 +1,57 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour {
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    /* Pieces Prefabs */
+    public GameObject whitePiece;
+    public GameObject whiteKing;
+    public GameObject blackPiece;
 
     public int gameState = 0;           // In this state, the code is waiting for : 0 = Piece selection, 1 = Piece animation, 2 = Player2/AI movement
                                         //private int activePlayer = 0;		// 0 = Player1, 1 = Player2, 2 = AI, to be used later
     private GameObject SelectedPiece;   // Selected Piece
+
+    private List<GameObject> gamePieces;
+
+    // Use this for initialization
+    void Start ()
+    {
+        gamePieces = new List<GameObject>();
+        AddPieces();
+	}
+
+
+
+    // Update is called once per frame
+    void Update ()
+    {
+		
+	}
+
+    private void AddPieces()
+    {
+        /* Add the white pieces */
+        gamePieces.Add(GameObject.Instantiate(whitePiece, new Vector3(3, 1, 5), Quaternion.identity));
+
+        gamePieces.Add(GameObject.Instantiate(whitePiece, new Vector3(4, 1, 6), Quaternion.identity));
+        gamePieces.Add(GameObject.Instantiate(whitePiece, new Vector3(4, 1, 5), Quaternion.identity));
+        gamePieces.Add(GameObject.Instantiate(whitePiece, new Vector3(4, 1, 4), Quaternion.identity));
+
+        gamePieces.Add(GameObject.Instantiate(whitePiece, new Vector3(5, 1, 7), Quaternion.identity));
+        gamePieces.Add(GameObject.Instantiate(whitePiece, new Vector3(5, 1, 6), Quaternion.identity));
+        gamePieces.Add(GameObject.Instantiate(whitePiece, new Vector3(5, 1, 4), Quaternion.identity));
+        gamePieces.Add(GameObject.Instantiate(whitePiece, new Vector3(5, 1, 3), Quaternion.identity));
+
+        gamePieces.Add(GameObject.Instantiate(whitePiece, new Vector3(6, 1, 6), Quaternion.identity));
+        gamePieces.Add(GameObject.Instantiate(whitePiece, new Vector3(6, 1, 5), Quaternion.identity));
+        gamePieces.Add(GameObject.Instantiate(whitePiece, new Vector3(6, 1, 4), Quaternion.identity));
+
+        gamePieces.Add(GameObject.Instantiate(whitePiece, new Vector3(7, 1, 5), Quaternion.identity));
+
+    }
 
     //Update SlectedPiece with the GameObject inputted to this function
     public void SelectPiece(GameObject _PieceToSelect)
@@ -38,23 +73,32 @@ public class GameManager : MonoBehaviour {
         {
             if (SelectedPiece.transform.position.z != _coordToMove.z)
             {
-                move = true;
+                move = checkPiece(_coordToMove);
             }
         }
         else if (SelectedPiece.transform.position.z == _coordToMove.z)
         {
-            move = true;
-        }
-        else
-        {
-            return false;
+            move = checkPiece(_coordToMove);
         }
 
         if(move)
         {
             SelectedPiece.transform.position = _coordToMove;// Move the piece
-            SelectedPiece.GetComponent<Renderer>().material.color = Color.white; // Change it's color back
-            SelectedPiece = null; // Unselect the Piece
+        }
+        SelectedPiece.GetComponent<Renderer>().material.color = Color.white; // Change it's color back
+        SelectedPiece = null; // Unselect the Piece
+        return true;
+    }
+
+    /* Check that no other piece is in the square moving to */
+    private bool checkPiece(Vector3 _coordToMove)
+    {
+        foreach (GameObject piece in gamePieces)
+        {
+            if (_coordToMove.x == piece.transform.position.x && _coordToMove.z == piece.transform.position.z)
+            {
+                return false;
+            }
         }
         return true;
     }
