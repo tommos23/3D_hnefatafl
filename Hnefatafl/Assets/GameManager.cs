@@ -11,7 +11,7 @@ public class GameManager : MonoBehaviour {
     public GameObject blackPiece;
 
     public int gameState = 0;           // In this state, the code is waiting for : 0 = Piece selection, 1 = Piece animation, 2 = Player2/AI movement
-                                        //private int activePlayer = 0;		// 0 = Player1, 1 = Player2, 2 = AI, to be used later
+    public int activePlayer = 0;		// 0 = Player1, 1 = Player2
     private GameObject SelectedPiece;   // Selected Piece
 
     private List<GameObject> gamePieces;
@@ -50,6 +50,35 @@ public class GameManager : MonoBehaviour {
         gamePieces.Add(GameObject.Instantiate(whitePiece, new Vector3(6, 1, 4), Quaternion.identity));
 
         gamePieces.Add(GameObject.Instantiate(whitePiece, new Vector3(7, 1, 5), Quaternion.identity));
+        
+        /* Add the black pieces */
+        gamePieces.Add(GameObject.Instantiate(blackPiece, new Vector3(3, 1, 0), Quaternion.identity));
+        gamePieces.Add(GameObject.Instantiate(blackPiece, new Vector3(4, 1, 0), Quaternion.identity));
+        gamePieces.Add(GameObject.Instantiate(blackPiece, new Vector3(5, 1, 0), Quaternion.identity));
+        gamePieces.Add(GameObject.Instantiate(blackPiece, new Vector3(6, 1, 0), Quaternion.identity));
+        gamePieces.Add(GameObject.Instantiate(blackPiece, new Vector3(7, 1, 0), Quaternion.identity));
+        gamePieces.Add(GameObject.Instantiate(blackPiece, new Vector3(5, 1, 1), Quaternion.identity));
+
+        gamePieces.Add(GameObject.Instantiate(blackPiece, new Vector3(0, 1, 3), Quaternion.identity));
+        gamePieces.Add(GameObject.Instantiate(blackPiece, new Vector3(0, 1, 4), Quaternion.identity));
+        gamePieces.Add(GameObject.Instantiate(blackPiece, new Vector3(0, 1, 5), Quaternion.identity));
+        gamePieces.Add(GameObject.Instantiate(blackPiece, new Vector3(0, 1, 6), Quaternion.identity));
+        gamePieces.Add(GameObject.Instantiate(blackPiece, new Vector3(0, 1, 7), Quaternion.identity));
+        gamePieces.Add(GameObject.Instantiate(blackPiece, new Vector3(1, 1, 5), Quaternion.identity));
+
+        gamePieces.Add(GameObject.Instantiate(blackPiece, new Vector3(3, 1, 10), Quaternion.identity));
+        gamePieces.Add(GameObject.Instantiate(blackPiece, new Vector3(4, 1, 10), Quaternion.identity));
+        gamePieces.Add(GameObject.Instantiate(blackPiece, new Vector3(5, 1, 10), Quaternion.identity));
+        gamePieces.Add(GameObject.Instantiate(blackPiece, new Vector3(6, 1, 10), Quaternion.identity));
+        gamePieces.Add(GameObject.Instantiate(blackPiece, new Vector3(7, 1, 10), Quaternion.identity));
+        gamePieces.Add(GameObject.Instantiate(blackPiece, new Vector3(5, 1, 9), Quaternion.identity));
+
+        gamePieces.Add(GameObject.Instantiate(blackPiece, new Vector3(10, 1, 3), Quaternion.identity));
+        gamePieces.Add(GameObject.Instantiate(blackPiece, new Vector3(10, 1, 4), Quaternion.identity));
+        gamePieces.Add(GameObject.Instantiate(blackPiece, new Vector3(10, 1, 5), Quaternion.identity));
+        gamePieces.Add(GameObject.Instantiate(blackPiece, new Vector3(10, 1, 6), Quaternion.identity));
+        gamePieces.Add(GameObject.Instantiate(blackPiece, new Vector3(10, 1, 7), Quaternion.identity));
+        gamePieces.Add(GameObject.Instantiate(blackPiece, new Vector3(9, 1, 5), Quaternion.identity));
 
     }
 
@@ -60,9 +89,13 @@ public class GameManager : MonoBehaviour {
         if (SelectedPiece)
         {
             SelectedPiece.GetComponent<Renderer>().material.color = Color.white;
+            ChangeState(0);
+            SelectedPiece = null;
+            return;
         }
         SelectedPiece = _PieceToSelect;
         SelectedPiece.GetComponent<Renderer>().material.color = Color.red;
+        ChangeState(1);
     }
 
     // Move the SelectedPiece to the inputted coords
@@ -84,6 +117,8 @@ public class GameManager : MonoBehaviour {
         if(move)
         {
             SelectedPiece.transform.position = _coordToMove;// Move the piece
+            ChangeState(0);
+            ChangePlayer();
         }
         SelectedPiece.GetComponent<Renderer>().material.color = Color.white; // Change it's color back
         SelectedPiece = null; // Unselect the Piece
@@ -93,20 +128,87 @@ public class GameManager : MonoBehaviour {
     /* Check that no other piece is in the square moving to */
     private bool checkPiece(Vector3 _coordToMove)
     {
-        foreach (GameObject piece in gamePieces)
+        float x1 = SelectedPiece.transform.position.x;
+        float x2 = _coordToMove.x;
+        float dx = x2 - x1;
+
+        float z1 = SelectedPiece.transform.position.z;
+        float z2 = _coordToMove.z;
+        float dz = z2 - z1;
+
+        /* Movement on z axis (aka. up down) */
+        if(dx == 0)
         {
-            if (_coordToMove.x == piece.transform.position.x && _coordToMove.z == piece.transform.position.z)
+            foreach (GameObject piece in gamePieces)
             {
-                return false;
+                if (x1 == piece.transform.position.x)
+                {
+                    /* Moving up board */
+                    if (dz > 0)
+                    {
+                        if (z1 < piece.transform.position.z && piece.transform.position.z <= z2)
+                        {
+                            return false;
+                        }
+                    }
+                    /* Moving down board */
+                    else
+                    {
+                        if (z1 > piece.transform.position.z && piece.transform.position.z >= z2)
+                        {
+                            return false;
+                        }
+                    }
+                }
             }
         }
+        /* Movement on x axis (aka. left right) */
+        else if (dz == 0)
+        {
+            foreach (GameObject piece in gamePieces)
+            {
+                if (z1 == piece.transform.position.z)
+                {
+                    /* Moving up board */
+                    if (dx > 0)
+                    {
+                        if (x1 < piece.transform.position.x && piece.transform.position.x <= x2)
+                        {
+                            return false;
+                        }
+                    }
+                    /* Moving down board */
+                    else
+                    {
+                        if (x1 > piece.transform.position.x && piece.transform.position.x >= x2)
+                        {
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+
+
         return true;
     }
 
     // Change the state of the game
-    public void ChangeState(int _newState)
+    private void ChangeState(int _newState)
     {
         gameState = _newState;
         Debug.Log("GameState = " + _newState);
+    }
+
+    private void ChangePlayer()
+    {
+        if(activePlayer == 0)
+        {
+            activePlayer = 1;
+        }
+        else
+        {
+            activePlayer = 0;
+        }
     }
 }

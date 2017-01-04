@@ -36,11 +36,21 @@ public class PlayerControls : MonoBehaviour {
                 // Raycast and verify that it collided
                 if (Physics.Raycast(_ray, out _hitInfo))
                 {
-                    // Select the piece if it has the good Tag
-                    if (_hitInfo.collider.gameObject.tag == ("PiecePlayer1"))
+                    if (_GameManager.activePlayer == 0)
                     {
-                        _GameManager.SelectPiece(_hitInfo.collider.gameObject);
-                        _GameManager.ChangeState(1);
+                        // Select the piece if it has the good Tag
+                        if (_hitInfo.collider.gameObject.tag.Contains("PiecePlayer1"))
+                        {
+                            _GameManager.SelectPiece(_hitInfo.collider.gameObject);
+                        }
+                    }
+                    else if(_GameManager.activePlayer == 1)
+                    {
+                        // Select the piece if it has the good Tag
+                        if (_hitInfo.collider.gameObject.tag.Contains("PiecePlayer2"))
+                        {
+                            _GameManager.SelectPiece(_hitInfo.collider.gameObject);
+                        }
                     }
                 }
             }
@@ -64,8 +74,7 @@ public class PlayerControls : MonoBehaviour {
                     if (_hitInfo.collider.gameObject.tag == ("Cube"))
                     {
                         selectedCoord = new Vector3(_hitInfo.collider.gameObject.transform.position.x, 1, _hitInfo.collider.gameObject.transform.position.z);
-                        _GameManager.MovePiece(selectedCoord);
-                        _GameManager.ChangeState(0);                    
+                        _GameManager.MovePiece(selectedCoord);                 
                     }
                 }
             }
