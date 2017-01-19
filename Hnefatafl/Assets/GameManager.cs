@@ -150,13 +150,13 @@ public class GameManager : MonoBehaviour {
         }
 
         /* Splits the gamePieces into player pieces (using LINQ) */
-        var currentPlayerPieces = from GameObject piece in gamePieces
-                                  where piece.tag.Contains(currentPlayerColour)
-                                  select piece;
+        List<GameObject> currentPlayerPieces = (from GameObject piece in gamePieces
+                                                where piece.tag.Contains(currentPlayerColour) 
+                                                select piece).ToList<GameObject>();
 
-        var oppositePlayerPieces = from GameObject piece in gamePieces
-                                   where piece.tag.Contains(oppositePlayerColour)
-                                   select piece;
+        List<GameObject> oppositePlayerPieces = (from GameObject piece in gamePieces
+                                                where piece.tag.Contains(oppositePlayerColour)
+                                                select piece).ToList<GameObject>();
 
 
         foreach (GameObject oppositeColourPiece in oppositePlayerPieces)
@@ -165,21 +165,37 @@ public class GameManager : MonoBehaviour {
             float foundPieceZ = oppositeColourPiece.transform.position.z;
             /* Find the other players pieces */
 
+            //if they are on the same row
+            if(foundPieceZ == moveToZ)
+            {
+                float foundMinusMove = foundPieceX - moveToX;
+                if (1 == foundMinusMove)
+                {
+                    //Same colour, two away, same line
+                    List<GameObject> adjacentPiece = (from GameObject piece in gamePieces
+                                                            where piece.tag.Contains(currentPlayerColour) 
+                                                            && piece.transform.position.x == moveToX + 2
+                                                            && piece.transform.position.z == moveToZ
+                                                           select piece).ToList<GameObject>();
+                    //There is a piece on the other side
+                    if (adjacentPiece.Count() == 1)
+                    {
+
+                    }
+                    
+                }
+                else if (-1 == foundMinusMove)
+                {
+
+                }
+            }
             /* if they are 1 apart (next to) */
+
+
+
             if(Math.Abs(foundPieceX - moveToX) == 1 && foundPieceZ == moveToZ)
             {
-                foreach(GameObject currentColourPiece in currentPlayerPieces)
-                {
-                    /* Make sure its on the same line */
-                    if(currentColourPiece.transform.position.z == moveToZ)
-                    {
-                        /* Is the piece two away from the selected piece */
-                        if(Math.Abs(currentColourPiece.transform.position.x - moveToX) == 2)
-                        {
 
-                        }
-                    }
-                }
             }
             else if(Math.Abs(foundPieceZ - moveToZ) == 1 && foundPieceX == moveToX)
             {
