@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml.Linq;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour {
@@ -82,6 +83,7 @@ public class GameManager : MonoBehaviour {
         gamePieces.Add(GameObject.Instantiate(blackPiece, new Vector3(10, 1, 7), Quaternion.identity));
         gamePieces.Add(GameObject.Instantiate(blackPiece, new Vector3(9, 1, 5), Quaternion.identity));
 
+        PrintGameState();
     }
 
     /* Update SlectedPiece with the GameObject inputted to this function */
@@ -120,7 +122,7 @@ public class GameManager : MonoBehaviour {
         if(canMove)
         {
             SelectedPiece.transform.position = _coordToMove; // Move the piece
-            takePieces(_coordToMove); //Take any pieces after the move
+            TakePieces(_coordToMove); //Take any pieces after the move
             ChangeState(0);
             ChangePlayer();
         }
@@ -129,7 +131,7 @@ public class GameManager : MonoBehaviour {
         return true;
     }
 
-    private void takePieces(Vector3 _coordToMove)
+    private void TakePieces(Vector3 _coordToMove)
     {
         /*
         Find all other players pieces
@@ -150,13 +152,9 @@ public class GameManager : MonoBehaviour {
         }
 
         /* Splits the gamePieces into player pieces (using LINQ) */
-        var currentPlayerPieces = from GameObject piece in gamePieces
-                                  where piece.tag.Contains(currentPlayerColour)
-                                  select piece;
-
-        var oppositePlayerPieces = from GameObject piece in gamePieces
-                                   where piece.tag.Contains(oppositePlayerColour)
-                                   select piece;
+        List<GameObject> oppositePlayerPieces = (from GameObject piece in gamePieces
+                                                where piece.tag.Contains(oppositePlayerColour)
+                                                select piece).ToList<GameObject>();
 
 
         foreach (GameObject oppositeColourPiece in oppositePlayerPieces)
@@ -165,27 +163,84 @@ public class GameManager : MonoBehaviour {
             float foundPieceZ = oppositeColourPiece.transform.position.z;
             /* Find the other players pieces */
 
-            /* if they are 1 apart (next to) */
-            if(Math.Abs(foundPieceX - moveToX) == 1 && foundPieceZ == moveToZ)
+            //if they are on the same row
+            if(foundPieceZ == moveToZ)
             {
-                foreach(GameObject currentColourPiece in currentPlayerPieces)
+                float foundMinusMove = foundPieceX - moveToX;
+                if (1 == foundMinusMove)
                 {
-                    /* Make sure its on the same line */
-                    if(currentColourPiece.transform.position.z == moveToZ)
+                    //Same colour, two away, same line
+                    List<GameObject> adjacentPiece = (from GameObject piece in gamePieces
+                                                            where piece.tag.Contains(currentPlayerColour) 
+                                                            && piece.transform.position.x == moveToX + 2
+                                                            && piece.transform.position.z == moveToZ
+                                                            select piece).ToList<GameObject>();
+                    //There is a piece on the other side
+                    if (adjacentPiece.Count() == 1)
                     {
-                        /* Is the piece two away from the selected piece */
-                        if(Math.Abs(currentColourPiece.transform.position.x - moveToX) == 2)
-                        {
-
-                        }
+                        //Remove piece from game
+                        gamePieces.Remove(oppositeColourPiece);
+                        Destroy(oppositeColourPiece);
+                    }
+                    
+                }
+                else if (-1 == foundMinusMove)
+                {
+                    //Same colour, two away, same line
+                    List<GameObject> adjacentPiece = (from GameObject piece in gamePieces
+                                                      where piece.tag.Contains(currentPlayerColour)
+                                                      && piece.transform.position.x == moveToX - 2
+                                                      && piece.transform.position.z == moveToZ
+                                                      select piece).ToList<GameObject>();
+                    //There is a piece on the other side
+                    if (adjacentPiece.Count() == 1)
+                    {
+                        //Remove piece from game
+                        gamePieces.Remove(oppositeColourPiece);
+                        Destroy(oppositeColourPiece);
                     }
                 }
             }
-            else if(Math.Abs(foundPieceZ - moveToZ) == 1 && foundPieceX == moveToX)
-            {
 
+            //if they are on the same row
+            if (foundPieceX == moveToX)
+            {
+                float foundMinusMove = foundPieceZ - moveToZ;
+                if (1 == foundMinusMove)
+                {
+                    //Same colour, two away, same line
+                    List<GameObject> adjacentPiece = (from GameObject piece in gamePieces
+                                                      where piece.tag.Contains(currentPlayerColour)
+                                                      && piece.transform.position.z == moveToZ + 2
+                                                      && piece.transform.position.x == moveToX
+                                                      select piece).ToList<GameObject>();
+                    //There is a piece on the other side
+                    if (adjacentPiece.Count() == 1)
+                    {
+                        //Remove piece from game
+                        gamePieces.Remove(oppositeColourPiece);
+                        Destroy(oppositeColourPiece);
+                    }
+
+                }
+                else if (-1 == foundMinusMove)
+                {
+                    //Same colour, two away, same line
+                    List<GameObject> adjacentPiece = (from GameObject piece in gamePieces
+                                                      where piece.tag.Contains(currentPlayerColour)
+                                                      && piece.transform.position.z == moveToZ - 2
+                                                      && piece.transform.position.x == moveToX
+                                                      select piece).ToList<GameObject>();
+                    //There is a piece on the other side
+                    if (adjacentPiece.Count() == 1)
+                    {
+                        //Remove piece from game
+                        gamePieces.Remove(oppositeColourPiece);
+                        Destroy(oppositeColourPiece);
+                    }
+                }
             }
-            
+
         }
     }
 
@@ -254,6 +309,14 @@ public class GameManager : MonoBehaviour {
         }
         return true;
     }
+
+    private void PrintGameState()
+    {
+        XElement xmlElement = new XElement("Pieces", gamePieces.Select(i => new XElement("position", i.transform.position.x)));
+        Console.Write(xmlElement);
+        Debug.Log(xmlElement);
+    }
+
 
     // Change the state of the game
     private void ChangeState(int _newState)
