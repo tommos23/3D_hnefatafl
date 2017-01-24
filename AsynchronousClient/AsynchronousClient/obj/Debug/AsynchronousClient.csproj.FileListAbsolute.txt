@@ -1,0 +1,6 @@
+C:\Users\Aaron Thompson\Documents\GitHub\3D_hnefatafl\AsynchronousClient\AsynchronousClient\bin\Debug\AsynchronousClient.exe.config
+C:\Users\Aaron Thompson\Documents\GitHub\3D_hnefatafl\AsynchronousClient\AsynchronousClient\bin\Debug\AsynchronousClient.exe
+C:\Users\Aaron Thompson\Documents\GitHub\3D_hnefatafl\AsynchronousClient\AsynchronousClient\bin\Debug\AsynchronousClient.pdb
+C:\Users\Aaron Thompson\Documents\GitHub\3D_hnefatafl\AsynchronousClient\AsynchronousClient\obj\Debug\AsynchronousClient.csprojResolveAssemblyReference.cache
+C:\Users\Aaron Thompson\Documents\GitHub\3D_hnefatafl\AsynchronousClient\AsynchronousClient\obj\Debug\AsynchronousClient.exe
+C:\Users\Aaron Thompson\Documents\GitHub\3D_hnefatafl\AsynchronousClient\AsynchronousClient\obj\Debug\AsynchronousClient.pdb

@@ -23,7 +23,9 @@ public class GameManager : MonoBehaviour {
     {
         gamePieces = new List<GameObject>();
         AddPieces();
-	}
+
+        Assets.AsyncSocketServer.StartListening();
+    }
 
 
 
@@ -82,8 +84,6 @@ public class GameManager : MonoBehaviour {
         gamePieces.Add(GameObject.Instantiate(blackPiece, new Vector3(10, 1, 6), Quaternion.identity));
         gamePieces.Add(GameObject.Instantiate(blackPiece, new Vector3(10, 1, 7), Quaternion.identity));
         gamePieces.Add(GameObject.Instantiate(blackPiece, new Vector3(9, 1, 5), Quaternion.identity));
-
-        PrintGameState();
     }
 
     /* Update SlectedPiece with the GameObject inputted to this function */
@@ -309,14 +309,6 @@ public class GameManager : MonoBehaviour {
         }
         return true;
     }
-
-    private void PrintGameState()
-    {
-        XElement xmlElement = new XElement("Pieces", gamePieces.Select(i => new XElement("position", i.transform.position.x)));
-        Console.Write(xmlElement);
-        Debug.Log(xmlElement);
-    }
-
 
     // Change the state of the game
     private void ChangeState(int _newState)
