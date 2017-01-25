@@ -26,7 +26,7 @@ namespace Assets
     public class AsyncSocketServer
     {
         //Thread Signal
-        public static ManualResetEvent alldone = new ManualResetEvent(false);
+        //public static ManualResetEvent alldone = new ManualResetEvent(false);
 
         public AsyncSocketServer()
         {
@@ -53,20 +53,20 @@ namespace Assets
             {
                 listener.Bind(localEndPoint);
                 listener.Listen(100);
-                while (true)
-                {
-                    // Set the event to nonsignaled state.
-                    alldone.Reset();
 
-                    // Start an asynchronous socket to listen for connections.
-                    Debug.Log("Waiting for a connection...");
-                    listener.BeginAccept(
-                        new AsyncCallback(AcceptCallback),
-                        listener);
+                // Set the event to nonsignaled state.
+                //alldone.Reset();
 
-                    // Wait until a connection is made before continuing.
-                    alldone.WaitOne();
-                }
+                // Start an asynchronous socket to listen for connections.
+                Debug.Log("Waiting for a connection...");
+                listener.BeginAccept(
+                    new AsyncCallback(AcceptCallback),
+                    listener);
+                    
+
+                // Wait until a connection is made before continuing.
+                //alldone.WaitOne();
+
             }
             catch (Exception e)
             {
@@ -78,7 +78,7 @@ namespace Assets
         public static void AcceptCallback(IAsyncResult ar)
         {
             // Signal the main thread to continue.
-            alldone.Set();
+            //alldone.Set();
 
             // Get the socket that handles the client request.
             Socket listener = (Socket)ar.AsyncState;

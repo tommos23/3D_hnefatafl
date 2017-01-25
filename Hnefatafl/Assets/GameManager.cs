@@ -27,8 +27,6 @@ public class GameManager : MonoBehaviour {
         Assets.AsyncSocketServer.StartListening();
     }
 
-
-
     // Update is called once per frame
     void Update ()
     {
