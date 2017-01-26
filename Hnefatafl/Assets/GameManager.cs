@@ -11,6 +11,8 @@ public class GameManager : MonoBehaviour {
     public GameObject whitePiece;
     public GameObject whiteKing;
     public GameObject blackPiece;
+    public GameObject cornerPiece;
+    public GameObject centrePiece;
 
     public int gameState = 0;           // In this state, the code is waiting for : 0 = Piece selection, 1 = Piece animation, 2 = Player2/AI movement
     public int activePlayer = 1;		// 0 = Player1, 1 = Player2
@@ -36,57 +38,67 @@ public class GameManager : MonoBehaviour {
     private void AddPieces()
     {
         /* Add the white pieces */
-        gamePieces.Add(GameObject.Instantiate(whitePiece, new Vector3(3, 1, 5), Quaternion.identity));
+        gamePieces.Add(Instantiate(whitePiece, new Vector3(3, 1, 5), Quaternion.identity));
 
-        gamePieces.Add(GameObject.Instantiate(whitePiece, new Vector3(4, 1, 6), Quaternion.identity));
-        gamePieces.Add(GameObject.Instantiate(whitePiece, new Vector3(4, 1, 5), Quaternion.identity));
-        gamePieces.Add(GameObject.Instantiate(whitePiece, new Vector3(4, 1, 4), Quaternion.identity));
+        gamePieces.Add(Instantiate(whitePiece, new Vector3(4, 1, 6), Quaternion.identity));
+        gamePieces.Add(Instantiate(whitePiece, new Vector3(4, 1, 5), Quaternion.identity));
+        gamePieces.Add(Instantiate(whitePiece, new Vector3(4, 1, 4), Quaternion.identity));
 
-        gamePieces.Add(GameObject.Instantiate(whitePiece, new Vector3(5, 1, 7), Quaternion.identity));
-        gamePieces.Add(GameObject.Instantiate(whitePiece, new Vector3(5, 1, 6), Quaternion.identity));
-        gamePieces.Add(GameObject.Instantiate(whiteKing, new Vector3(5, 1, 5), Quaternion.identity));
-        gamePieces.Add(GameObject.Instantiate(whitePiece, new Vector3(5, 1, 4), Quaternion.identity));
-        gamePieces.Add(GameObject.Instantiate(whitePiece, new Vector3(5, 1, 3), Quaternion.identity));
+        gamePieces.Add(Instantiate(whitePiece, new Vector3(5, 1, 7), Quaternion.identity));
+        gamePieces.Add(Instantiate(whitePiece, new Vector3(5, 1, 6), Quaternion.identity));
+        gamePieces.Add(Instantiate(whiteKing, new Vector3(5, 1, 5), Quaternion.identity));
+        gamePieces.Add(Instantiate(whitePiece, new Vector3(5, 1, 4), Quaternion.identity));
+        gamePieces.Add(Instantiate(whitePiece, new Vector3(5, 1, 3), Quaternion.identity));
 
-        gamePieces.Add(GameObject.Instantiate(whitePiece, new Vector3(6, 1, 6), Quaternion.identity));
-        gamePieces.Add(GameObject.Instantiate(whitePiece, new Vector3(6, 1, 5), Quaternion.identity));
-        gamePieces.Add(GameObject.Instantiate(whitePiece, new Vector3(6, 1, 4), Quaternion.identity));
+        gamePieces.Add(Instantiate(whitePiece, new Vector3(6, 1, 6), Quaternion.identity));
+        gamePieces.Add(Instantiate(whitePiece, new Vector3(6, 1, 5), Quaternion.identity));
+        gamePieces.Add(Instantiate(whitePiece, new Vector3(6, 1, 4), Quaternion.identity));
 
-        gamePieces.Add(GameObject.Instantiate(whitePiece, new Vector3(7, 1, 5), Quaternion.identity));
+        gamePieces.Add(Instantiate(whitePiece, new Vector3(7, 1, 5), Quaternion.identity));
         
         /* Add the black pieces */
-        gamePieces.Add(GameObject.Instantiate(blackPiece, new Vector3(3, 1, 0), Quaternion.identity));
-        gamePieces.Add(GameObject.Instantiate(blackPiece, new Vector3(4, 1, 0), Quaternion.identity));
-        gamePieces.Add(GameObject.Instantiate(blackPiece, new Vector3(5, 1, 0), Quaternion.identity));
-        gamePieces.Add(GameObject.Instantiate(blackPiece, new Vector3(6, 1, 0), Quaternion.identity));
-        gamePieces.Add(GameObject.Instantiate(blackPiece, new Vector3(7, 1, 0), Quaternion.identity));
-        gamePieces.Add(GameObject.Instantiate(blackPiece, new Vector3(5, 1, 1), Quaternion.identity));
+        gamePieces.Add(Instantiate(blackPiece, new Vector3(3, 1, 0), Quaternion.identity));
+        gamePieces.Add(Instantiate(blackPiece, new Vector3(4, 1, 0), Quaternion.identity));
+        gamePieces.Add(Instantiate(blackPiece, new Vector3(5, 1, 0), Quaternion.identity));
+        gamePieces.Add(Instantiate(blackPiece, new Vector3(6, 1, 0), Quaternion.identity));
+        gamePieces.Add(Instantiate(blackPiece, new Vector3(7, 1, 0), Quaternion.identity));
+        gamePieces.Add(Instantiate(blackPiece, new Vector3(5, 1, 1), Quaternion.identity));
 
-        gamePieces.Add(GameObject.Instantiate(blackPiece, new Vector3(0, 1, 3), Quaternion.identity));
-        gamePieces.Add(GameObject.Instantiate(blackPiece, new Vector3(0, 1, 4), Quaternion.identity));
-        gamePieces.Add(GameObject.Instantiate(blackPiece, new Vector3(0, 1, 5), Quaternion.identity));
-        gamePieces.Add(GameObject.Instantiate(blackPiece, new Vector3(0, 1, 6), Quaternion.identity));
-        gamePieces.Add(GameObject.Instantiate(blackPiece, new Vector3(0, 1, 7), Quaternion.identity));
-        gamePieces.Add(GameObject.Instantiate(blackPiece, new Vector3(1, 1, 5), Quaternion.identity));
+        gamePieces.Add(Instantiate(blackPiece, new Vector3(0, 1, 3), Quaternion.identity));
+        gamePieces.Add(Instantiate(blackPiece, new Vector3(0, 1, 4), Quaternion.identity));
+        gamePieces.Add(Instantiate(blackPiece, new Vector3(0, 1, 5), Quaternion.identity));
+        gamePieces.Add(Instantiate(blackPiece, new Vector3(0, 1, 6), Quaternion.identity));
+        gamePieces.Add(Instantiate(blackPiece, new Vector3(0, 1, 7), Quaternion.identity));
+        gamePieces.Add(Instantiate(blackPiece, new Vector3(1, 1, 5), Quaternion.identity));
 
-        gamePieces.Add(GameObject.Instantiate(blackPiece, new Vector3(3, 1, 10), Quaternion.identity));
-        gamePieces.Add(GameObject.Instantiate(blackPiece, new Vector3(4, 1, 10), Quaternion.identity));
-        gamePieces.Add(GameObject.Instantiate(blackPiece, new Vector3(5, 1, 10), Quaternion.identity));
-        gamePieces.Add(GameObject.Instantiate(blackPiece, new Vector3(6, 1, 10), Quaternion.identity));
-        gamePieces.Add(GameObject.Instantiate(blackPiece, new Vector3(7, 1, 10), Quaternion.identity));
-        gamePieces.Add(GameObject.Instantiate(blackPiece, new Vector3(5, 1, 9), Quaternion.identity));
+        gamePieces.Add(Instantiate(blackPiece, new Vector3(3, 1, 10), Quaternion.identity));
+        gamePieces.Add(Instantiate(blackPiece, new Vector3(4, 1, 10), Quaternion.identity));
+        gamePieces.Add(Instantiate(blackPiece, new Vector3(5, 1, 10), Quaternion.identity));
+        gamePieces.Add(Instantiate(blackPiece, new Vector3(6, 1, 10), Quaternion.identity));
+        gamePieces.Add(Instantiate(blackPiece, new Vector3(7, 1, 10), Quaternion.identity));
+        gamePieces.Add(Instantiate(blackPiece, new Vector3(5, 1, 9), Quaternion.identity));
 
-        gamePieces.Add(GameObject.Instantiate(blackPiece, new Vector3(10, 1, 3), Quaternion.identity));
-        gamePieces.Add(GameObject.Instantiate(blackPiece, new Vector3(10, 1, 4), Quaternion.identity));
-        gamePieces.Add(GameObject.Instantiate(blackPiece, new Vector3(10, 1, 5), Quaternion.identity));
-        gamePieces.Add(GameObject.Instantiate(blackPiece, new Vector3(10, 1, 6), Quaternion.identity));
-        gamePieces.Add(GameObject.Instantiate(blackPiece, new Vector3(10, 1, 7), Quaternion.identity));
-        gamePieces.Add(GameObject.Instantiate(blackPiece, new Vector3(9, 1, 5), Quaternion.identity));
+        gamePieces.Add(Instantiate(blackPiece, new Vector3(10, 1, 3), Quaternion.identity));
+        gamePieces.Add(Instantiate(blackPiece, new Vector3(10, 1, 4), Quaternion.identity));
+        gamePieces.Add(Instantiate(blackPiece, new Vector3(10, 1, 5), Quaternion.identity));
+        gamePieces.Add(Instantiate(blackPiece, new Vector3(10, 1, 6), Quaternion.identity));
+        gamePieces.Add(Instantiate(blackPiece, new Vector3(10, 1, 7), Quaternion.identity));
+        gamePieces.Add(Instantiate(blackPiece, new Vector3(9, 1, 5), Quaternion.identity));
+
+        //Add 'invisible' corner and centre pieces
+        gamePieces.Add(Instantiate(cornerPiece, new Vector3(0, 1, 0), Quaternion.identity));
+        gamePieces.Add(Instantiate(cornerPiece, new Vector3(0, 1, 10), Quaternion.identity));
+        gamePieces.Add(Instantiate(cornerPiece, new Vector3(10, 1, 0), Quaternion.identity));
+        gamePieces.Add(Instantiate(cornerPiece, new Vector3(10, 1, 10), Quaternion.identity));
+
+        gamePieces.Add(Instantiate(centrePiece, new Vector3(5, 1, 5), Quaternion.identity));
+
     }
 
     /* Update SlectedPiece with the GameObject inputted to this function */
     public void SelectPiece(GameObject _PieceToSelect)
     {
+        
         // Change color of the selected piece to make it apparent. Put it back to white when the piece is unselected
         if (SelectedPiece)
         {

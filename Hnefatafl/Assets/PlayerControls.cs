@@ -39,7 +39,7 @@ public class PlayerControls : MonoBehaviour {
                     if (_GameManager.activePlayer == 0)
                     {
                         // Select the piece if it has the good Tag
-                        if (_hitInfo.collider.gameObject.tag.Contains("PiecePlayer1"))
+                        if (_hitInfo.collider.gameObject.tag.Contains("PiecePlayer1") || _hitInfo.collider.gameObject.tag.Contains("King"))
                         {
                             _GameManager.SelectPiece(_hitInfo.collider.gameObject);
                         }

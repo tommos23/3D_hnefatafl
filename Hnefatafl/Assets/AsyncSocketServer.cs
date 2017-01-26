@@ -33,11 +33,9 @@ namespace Assets
 
         }
 
+ 
         public static void StartListening()
         {
-            // Data buffer for incoming data.
-            byte[] bytes = new Byte[1024];
-
             // Establish the local endpoint for the socket.
             // The DNS name of the computer
             // running the listener is "host.contoso.com".
@@ -72,7 +70,6 @@ namespace Assets
             {
                 Debug.Log(e.ToString());
             }
-
         }
 
         public static void AcceptCallback(IAsyncResult ar)
