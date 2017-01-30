@@ -14,9 +14,7 @@ public class GameManager : MonoBehaviour {
     public GameObject cornerPiece;
     public GameObject centrePiece;
 
-    public int gameState = 0;           // In this state, the code is waiting for : 0 = Piece selection, 1 = Piece animation, 2 = Player2/AI movement
-    public int activePlayer = 1;		// 0 = Player1, 1 = Player2
-    private GameObject SelectedPiece;   // Selected Piece
+    public int activePlayer = 1;		// 1 = Player1, 2 = Player2
 
     private List<GameObject> gamePieces;
 
@@ -26,7 +24,7 @@ public class GameManager : MonoBehaviour {
         gamePieces = new List<GameObject>();
         AddPieces();
 
-        Assets.AsyncSocketServer.StartListening();
+        //Assets.AsyncSocketServer.StartListening();
     }
 
     // Update is called once per frame
@@ -95,50 +93,32 @@ public class GameManager : MonoBehaviour {
 
     }
 
-    /* Update SlectedPiece with the GameObject inputted to this function */
-    public void SelectPiece(GameObject _PieceToSelect)
-    {
-        
-        // Change color of the selected piece to make it apparent. Put it back to white when the piece is unselected
-        if (SelectedPiece)
-        {
-            SelectedPiece.GetComponent<Renderer>().material.color = Color.white;
-            ChangeState(0);
-            SelectedPiece = null;
-            return;
-        }
-        SelectedPiece = _PieceToSelect;
-        SelectedPiece.GetComponent<Renderer>().material.color = Color.red;
-        ChangeState(1);
-    }
 
     /* Move the SelectedPiece to the inputted coords */
-    public bool MovePiece(Vector3 _coordToMove)
+    public bool MovePiece(GameObject _selectedPiece, Vector3 _coordMoveTo)
     {
         bool canMove = false;
         /* First check that the player is only moving along one axis */
-        if(SelectedPiece.transform.position.x == _coordToMove.x)
+        if(_selectedPiece.transform.position.x == _coordMoveTo.x)
         {
-            if (SelectedPiece.transform.position.z != _coordToMove.z)
+            if (_selectedPiece.transform.position.z != _coordMoveTo.z)
             {
-                canMove = checkPiece(_coordToMove);
+                canMove = checkPiece(_selectedPiece, _coordMoveTo);
             }
         }
-        else if (SelectedPiece.transform.position.z == _coordToMove.z)
+        else if (_selectedPiece.transform.position.z == _coordMoveTo.z)
         {
-            canMove = checkPiece(_coordToMove);
+            canMove = checkPiece(_selectedPiece, _coordMoveTo);
         }
 
         if(canMove)
         {
-            SelectedPiece.transform.position = _coordToMove; // Move the piece
-            TakePieces(_coordToMove); //Take any pieces after the move
-            ChangeState(0);
+            _selectedPiece.transform.position = _coordMoveTo; // Move the piece
+            TakePieces(_coordMoveTo); //Take any pieces after the move
             ChangePlayer();
         }
-        SelectedPiece.GetComponent<Renderer>().material.color = Color.white; // Change it's color back
-        SelectedPiece = null; // Unselect the Piece
-        return true;
+        _selectedPiece.GetComponent<Renderer>().material.color = Color.white; // Change it's color back
+        return canMove;
     }
 
     private void TakePieces(Vector3 _coordToMove)
@@ -155,7 +135,7 @@ public class GameManager : MonoBehaviour {
         /* Get the pieces for the current player and opposite player */
         string currentPlayerColour = "PiecePlayer1";
         string oppositePlayerColour = "PiecePlayer2";
-        if(activePlayer == 1)
+        if(activePlayer == 2)
         {
             currentPlayerColour = "PiecePlayer2";
             oppositePlayerColour = "PiecePlayer1";
@@ -163,8 +143,8 @@ public class GameManager : MonoBehaviour {
 
         /* Splits the gamePieces into player pieces (using LINQ) */
         List<GameObject> oppositePlayerPieces = (from GameObject piece in gamePieces
-                                                where piece.tag.Contains(oppositePlayerColour)
-                                                select piece).ToList<GameObject>();
+                                                 where piece.tag.Contains(oppositePlayerColour)
+                                                 select piece).ToList<GameObject>();
 
 
         foreach (GameObject oppositeColourPiece in oppositePlayerPieces)
@@ -181,10 +161,11 @@ public class GameManager : MonoBehaviour {
                 {
                     //Same colour, two away, same line
                     List<GameObject> adjacentPiece = (from GameObject piece in gamePieces
-                                                            where piece.tag.Contains(currentPlayerColour) 
-                                                            && piece.transform.position.x == moveToX + 2
-                                                            && piece.transform.position.z == moveToZ
-                                                            select piece).ToList<GameObject>();
+                                                        where (piece.tag.Contains(currentPlayerColour) 
+                                                        || piece.tag.Contains("Hostile"))
+                                                        && piece.transform.position.x == moveToX + 2
+                                                        && piece.transform.position.z == moveToZ
+                                                        select piece).ToList<GameObject>();
                     //There is a piece on the other side
                     if (adjacentPiece.Count() == 1)
                     {
@@ -198,10 +179,11 @@ public class GameManager : MonoBehaviour {
                 {
                     //Same colour, two away, same line
                     List<GameObject> adjacentPiece = (from GameObject piece in gamePieces
-                                                      where piece.tag.Contains(currentPlayerColour)
-                                                      && piece.transform.position.x == moveToX - 2
-                                                      && piece.transform.position.z == moveToZ
-                                                      select piece).ToList<GameObject>();
+                                                        where (piece.tag.Contains(currentPlayerColour)
+                                                        || piece.tag.Contains("Hostile"))
+                                                        && piece.transform.position.x == moveToX - 2
+                                                        && piece.transform.position.z == moveToZ
+                                                        select piece).ToList<GameObject>();
                     //There is a piece on the other side
                     if (adjacentPiece.Count() == 1)
                     {
@@ -255,13 +237,13 @@ public class GameManager : MonoBehaviour {
     }
 
     /* Check that no other piece is in the square moving to */
-    private bool checkPiece(Vector3 _coordToMove)
+    private bool checkPiece(GameObject _selectedPiece, Vector3 _coordToMove)
     {
-        float x1 = SelectedPiece.transform.position.x;
+        float x1 = _selectedPiece.transform.position.x;
         float x2 = _coordToMove.x;
         float dx = x2 - x1;
 
-        float z1 = SelectedPiece.transform.position.z;
+        float z1 = _selectedPiece.transform.position.z;
         float z2 = _coordToMove.z;
         float dz = z2 - z1;
 
@@ -320,22 +302,15 @@ public class GameManager : MonoBehaviour {
         return true;
     }
 
-    // Change the state of the game
-    private void ChangeState(int _newState)
-    {
-        gameState = _newState;
-        Debug.Log("GameState = " + _newState);
-    }
-
     private void ChangePlayer()
     {
-        if(activePlayer == 0)
+        if(activePlayer == 1)
         {
-            activePlayer = 1;
+            activePlayer = 2;
         }
         else
         {
-            activePlayer = 0;
+            activePlayer = 1;
         }
     }
 }

@@ -5,79 +5,47 @@ using UnityEngine;
 
 public class PlayerControls : MonoBehaviour {
 
-    private Camera PlayerCam;           // Camera used by the player
-    private GameManager _GameManager;   // GameObject responsible for the management of the game
+    public static Camera PlayerCam;           // Camera used by the player
+    public static GameManager _GameManager;   // GameObject responsible for the management of the game
+    private Assets.Player player1;
+    private Assets.Player player2;
+
 
     // Use this for initialization
-    void Start () {
+    void Start ()
+    {
         PlayerCam = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>(); // Find the Camera's GameObject from its tag 
         _GameManager = gameObject.GetComponent<GameManager>();
+
+        switch (Assets.ApplicationModel.gameType)
+        {
+            case Assets.ApplicationModel.GameType.AI_V_AI:
+                player1 = new Assets.AIPlayer();
+                player2 = new Assets.AIPlayer();
+                break;
+            case Assets.ApplicationModel.GameType.AI_V_Player:
+                player1 = new Assets.AIPlayer();
+                player2 = new Assets.HumanPlayer(2);
+                break;
+            case Assets.ApplicationModel.GameType.Player_V_Player:
+                player1 = new Assets.HumanPlayer(1);
+                player2 = new Assets.HumanPlayer(2);
+                break;
+        }
+        
     }
 	
 	// Update is called once per frame
-	void Update () {
-        // Look for Mouse Inputs
-        GetMouseInputs();
-    }
-
-    private void GetMouseInputs()
+	void Update ()
     {
-        Ray _ray;
-        RaycastHit _hitInfo;
-
-        // Select a piece if the gameState is 0 or 1
-        if (_GameManager.gameState < 2)
+        if(_GameManager.activePlayer == 1)
         {
-            // On Left Click
-            if (Input.GetMouseButtonDown(0))
-            {
-                _ray = PlayerCam.ScreenPointToRay(Input.mousePosition); // Specify the ray to be casted from the position of the mouse click
-
-                // Raycast and verify that it collided
-                if (Physics.Raycast(_ray, out _hitInfo))
-                {
-                    if (_GameManager.activePlayer == 0)
-                    {
-                        // Select the piece if it has the good Tag
-                        if (_hitInfo.collider.gameObject.tag.Contains("PiecePlayer1") || _hitInfo.collider.gameObject.tag.Contains("King"))
-                        {
-                            _GameManager.SelectPiece(_hitInfo.collider.gameObject);
-                        }
-                    }
-                    else if(_GameManager.activePlayer == 1)
-                    {
-                        // Select the piece if it has the good Tag
-                        if (_hitInfo.collider.gameObject.tag.Contains("PiecePlayer2"))
-                        {
-                            _GameManager.SelectPiece(_hitInfo.collider.gameObject);
-                        }
-                    }
-                }
-            }
+            player1.IPlayerMove();
         }
-
-        // Move the piece if the gameState is 1
-        if (_GameManager.gameState == 1)
+        else
         {
-            Vector3 selectedCoord;
-
-            // On Left Click
-            if (Input.GetMouseButtonDown(0))
-            {
-                _ray = PlayerCam.ScreenPointToRay(Input.mousePosition); // Specify the ray to be casted from the position of the mouse click
-
-                // Raycast and verify that it collided
-                if (Physics.Raycast(_ray, out _hitInfo))
-                {
-
-                    // Select the piece if it has the good Tag
-                    if (_hitInfo.collider.gameObject.tag == ("Cube"))
-                    {
-                        selectedCoord = new Vector3(_hitInfo.collider.gameObject.transform.position.x, 1, _hitInfo.collider.gameObject.transform.position.z);
-                        _GameManager.MovePiece(selectedCoord);                 
-                    }
-                }
-            }
+            player2.IPlayerMove();
         }
     }
+
 }

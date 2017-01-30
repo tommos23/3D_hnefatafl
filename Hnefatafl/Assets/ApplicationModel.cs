@@ -8,6 +8,6 @@ namespace Assets
     class ApplicationModel
     {
         public enum GameType {Player_V_Player, AI_V_Player, AI_V_AI};
-        static public int gameType = (int)GameType.Player_V_Player;
+        static public GameType gameType = GameType.Player_V_Player;
     }
 }
