@@ -26,7 +26,13 @@ public class GameLoad : MonoBehaviour {
             SceneManager.LoadScene("main");
         }
 
-        if (GUI.Button(new Rect(10, 130, 250, 30), "AI Vs AI"))
+        if (GUI.Button(new Rect(10, 130, 250, 30), "Player Vs AI"))
+        {
+            Assets.ApplicationModel.gameType = Assets.ApplicationModel.GameType.Player_V_AI;
+            SceneManager.LoadScene("main");
+        }
+
+        if (GUI.Button(new Rect(10, 160, 250, 30), "AI Vs AI"))
         {
             Assets.ApplicationModel.gameType = Assets.ApplicationModel.GameType.AI_V_AI;
             SceneManager.LoadScene("main");

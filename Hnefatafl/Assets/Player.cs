@@ -14,9 +14,23 @@ namespace Assets
 
     class AIPlayer : Player
     {
+        private Assets.SyncSocketServer socketServer;
+
+        public AIPlayer(System.Int32 _serverPort)
+        {
+            socketServer = new SyncSocketServer(_serverPort);
+        }
+
         public void IPlayerMove()
         {
-            
+            if (!socketServer.messageFlag)
+            {
+                socketServer.StartListening();
+                //TODO this is only to be used for testing
+                PlayerControls._GameManager.ChangePlayer();
+                //Read the message
+                socketServer.messageFlag = false;
+            }
         }
     }
 

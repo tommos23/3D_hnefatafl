@@ -7,7 +7,7 @@ namespace Assets
 {
     class ApplicationModel
     {
-        public enum GameType {Player_V_Player, AI_V_Player, AI_V_AI};
+        public enum GameType {Player_V_Player, AI_V_Player, Player_V_AI, AI_V_AI};
         static public GameType gameType = GameType.Player_V_Player;
     }
 }

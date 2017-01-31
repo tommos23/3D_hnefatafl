@@ -1,0 +1,6 @@
+C:\Users\Steff\Documents\GitHub\3D_hnefatafl\SyncSocketClient\SyncSocketClient\bin\Debug\SyncSocketClient.exe.config
+C:\Users\Steff\Documents\GitHub\3D_hnefatafl\SyncSocketClient\SyncSocketClient\obj\Debug\SyncSocketClient.csprojResolveAssemblyReference.cache
+C:\Users\Steff\Documents\GitHub\3D_hnefatafl\SyncSocketClient\SyncSocketClient\bin\Debug\SyncSocketClient.exe
+C:\Users\Steff\Documents\GitHub\3D_hnefatafl\SyncSocketClient\SyncSocketClient\bin\Debug\SyncSocketClient.pdb
+C:\Users\Steff\Documents\GitHub\3D_hnefatafl\SyncSocketClient\SyncSocketClient\obj\Debug\SyncSocketClient.exe
+C:\Users\Steff\Documents\GitHub\3D_hnefatafl\SyncSocketClient\SyncSocketClient\obj\Debug\SyncSocketClient.pdb

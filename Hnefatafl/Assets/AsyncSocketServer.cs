@@ -34,14 +34,14 @@ namespace Assets
         }
 
  
-        public static void StartListening()
+        public static void StartListening(System.Int32 port)
         {
             // Establish the local endpoint for the socket.
             // The DNS name of the computer
             // running the listener is "host.contoso.com".
             IPHostEntry ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
             IPAddress ipAddress = ipHostInfo.AddressList[2];
-            IPEndPoint localEndPoint = new IPEndPoint(ipAddress, 11000);
+            IPEndPoint localEndPoint = new IPEndPoint(ipAddress, port);
 
             // Create a TCP/IP socket.
             Socket listener = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -118,6 +118,9 @@ namespace Assets
                         content.Length, content);
                     // Echo the data back to the client.
                     Send(handler, content);
+
+                    //TODO: the place to do the game move?
+
                 }
                 else
                 {

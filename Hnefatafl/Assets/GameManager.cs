@@ -302,7 +302,7 @@ public class GameManager : MonoBehaviour {
         return true;
     }
 
-    private void ChangePlayer()
+    public void ChangePlayer()
     {
         if(activePlayer == 1)
         {
