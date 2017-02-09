@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using UnityEngine;
 
 namespace Assets
@@ -9,12 +10,13 @@ namespace Assets
     interface Player
     {
         void IPlayerMove();
-
+        void ISendPlayersMove(Vector3[] lastMove);
     }
 
     class AIPlayer : Player
     {
         private Assets.SyncSocketServer socketServer;
+        private GameObject selectedPiece;
 
         public AIPlayer(System.Int32 _serverPort)
         {
@@ -26,10 +28,94 @@ namespace Assets
             if (!socketServer.messageFlag)
             {
                 socketServer.StartListening();
-                //TODO this is only to be used for testing
-                PlayerControls._GameManager.ChangePlayer();
+                
                 //Read the message
                 socketServer.messageFlag = false;
+            }
+            else if (SyncSocketServer.data != null)
+            {
+                Regex validInput = new Regex("^([a-k]{1})([1-9]|1[0-1])-([a-k]{1})([1-9]|1[0-1])<EOF>$");
+                if(validInput.IsMatch(socketServer.GetData()))
+                {
+                    var splitInput = validInput.Split(socketServer.GetData());
+                    int selectedPieceX = StringConvertedToNumber(splitInput[0]);
+                    int selectedPieceZ = Convert.ToInt32(splitInput[1]);
+
+                    selectedPiece = PlayerControls._GameManager.selectPiece(selectedPieceX, selectedPieceZ);
+                    if(selectedPiece != null)
+                    {
+                        int moveToX = StringConvertedToNumber(splitInput[2]);
+                        int moveToZ = Convert.ToInt32(splitInput[3]);
+                        Vector3 moveToCoord = new Vector3(moveToX, 1, moveToZ);
+                        if(!PlayerControls._GameManager.MovePiece(selectedPiece, moveToCoord))
+                        {
+                            //Invalid move, game lost
+                            PlayerControls._GameManager.playerWon(false);
+                        }
+                    }
+                    else
+                    {
+                        //Wrong piece selected, game lost
+                        PlayerControls._GameManager.playerWon(false);
+                    }
+                }
+                else
+                {
+                    //Pattern does not match, game lost
+                    PlayerControls._GameManager.playerWon(false);
+                }
+                
+            }    
+        }
+
+        private int StringConvertedToNumber(string column)
+        {
+            int retVal = 0;
+            string col = column.ToUpper();
+            for (int iChar = col.Length - 1; iChar >= 0; iChar--)
+            {
+                char colPiece = col[iChar];
+                int colNum = colPiece - 64;
+                retVal = retVal + colNum * (int)Math.Pow(26, col.Length - (iChar + 1));
+            }
+            return retVal;
+        }
+
+        private string NumberConvertedToString(int column)
+        {
+            string columnString = "";
+            decimal columnNumber = column;
+            while (columnNumber > 0)
+            {
+                decimal currentLetterNumber = (columnNumber - 1) % 26;
+                char currentLetter = (char)(currentLetterNumber + 65);
+                columnString = currentLetter + columnString;
+                columnNumber = (columnNumber - (currentLetterNumber + 1)) / 26;
+            }
+            return columnString;
+        }
+
+        public void ISendPlayersMove(Vector3[] lastMove)
+        {
+            if(lastMove.Length == 2)
+            {
+                //Final result should be in the format: "a1-a1<EOF>"
+                StringBuilder lastMoveString = new StringBuilder();
+                //Letter part
+                lastMoveString.Append(NumberConvertedToString((int)lastMove[0].x));
+                //Number part
+                lastMoveString.Append((int)lastMove[0].z);
+                //Seperator
+                lastMoveString.Append("-");
+                //Letter part
+                lastMoveString.Append(NumberConvertedToString((int)lastMove[1].x));
+                //Number part
+                lastMoveString.Append((int)lastMove[1].z);
+                //EOF
+                lastMoveString.Append("<EOF>");
+
+                //Send over socket
+                socketServer.SendData(lastMoveString.ToString());
             }
         }
     }
@@ -126,5 +212,9 @@ namespace Assets
         }
 
 
+        public void ISendPlayersMove(Vector3[] lastMove)
+        {
+            
+        }
     }
 }

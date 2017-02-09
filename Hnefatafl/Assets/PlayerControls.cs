@@ -9,7 +9,7 @@ public class PlayerControls : MonoBehaviour {
     public static GameManager _GameManager;   // GameObject responsible for the management of the game
     private Assets.Player player1;
     private Assets.Player player2;
-
+    private int currentPlayer = 1;
 
     // Use this for initialization
     void Start ()
@@ -43,14 +43,30 @@ public class PlayerControls : MonoBehaviour {
 	// Update is called once per frame
 	void Update ()
     {
-        if(_GameManager.activePlayer == 1)
+        if (currentPlayer == _GameManager.activePlayer)
         {
-            player1.IPlayerMove();
+            if (_GameManager.activePlayer == 1)
+            {
+                player1.IPlayerMove();
+            }
+            else
+            {
+                player2.IPlayerMove();
+            }
         }
         else
         {
-            player2.IPlayerMove();
+            //A plyer has made a turn. Inform everyone
+            player1.ISendPlayersMove(_GameManager.lastMove);
+            player2.ISendPlayersMove(_GameManager.lastMove);
+
+            currentPlayer = _GameManager.activePlayer;
         }
+    }
+
+    void OnGUI()
+    {
+
     }
 
 }

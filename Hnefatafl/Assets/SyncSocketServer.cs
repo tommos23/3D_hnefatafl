@@ -75,18 +75,26 @@ namespace Assets
                 // Show the data on the console.
                 Console.WriteLine("Text received : {0}", data);
 
-                // Echo the data back to the client.
-                byte[] msg = Encoding.ASCII.GetBytes(data);
-
-                handler.Send(msg);
-                handler.Shutdown(SocketShutdown.Both); 
-
                 messageFlag = true;
             }
             catch (Exception e)
             {
                 Debug.Log(e.ToString());
             }           
+        }
+
+        public void SendData(string data)
+        {
+            // Echo the data back to the client.
+            byte[] msg = Encoding.ASCII.GetBytes(data);
+
+            handler.Send(msg);
+            handler.Shutdown(SocketShutdown.Both);
+        }
+
+        public string GetData()
+        {
+            return data;
         }
 
         public void CloseSocket()

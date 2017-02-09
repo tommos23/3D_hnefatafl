@@ -13,15 +13,19 @@ public class GameManager : MonoBehaviour {
     public GameObject blackPiece;
     public GameObject cornerPiece;
     public GameObject centrePiece;
-
+    public Vector3[] lastMove;
     public int activePlayer = 1;		// 1 = Player1, 2 = Player2
 
+    private int gameWon = 0;            // 0 = no winner yet, 1 = Player1, 2 = Player2
     private List<GameObject> gamePieces;
+
 
     // Use this for initialization
     void Start ()
     {
         gamePieces = new List<GameObject>();
+        lastMove = new Vector3[2];
+
         AddPieces();
 
         //Assets.AsyncSocketServer.StartListening();
@@ -30,7 +34,11 @@ public class GameManager : MonoBehaviour {
     // Update is called once per frame
     void Update ()
     {
-		
+        //TODO 
+		if(gameWon != 0)
+        {
+
+        }
 	}
 
     private void AddPieces()
@@ -116,6 +124,9 @@ public class GameManager : MonoBehaviour {
             _selectedPiece.transform.position = _coordMoveTo; // Move the piece
             TakePieces(_coordMoveTo); //Take any pieces after the move
             ChangePlayer();
+            //Update last move to be sent to AI players
+            lastMove[0] = new Vector3(_selectedPiece.transform.position.x, 1, _selectedPiece.transform.position.z);
+            lastMove[1] = _coordMoveTo;
         }
         _selectedPiece.GetComponent<Renderer>().material.color = Color.white; // Change it's color back
         return canMove;
@@ -302,7 +313,29 @@ public class GameManager : MonoBehaviour {
         return true;
     }
 
-    public void ChangePlayer()
+    public GameObject selectPiece(int x, int z)
+    {
+        return (from gamePiece in gamePieces
+                where gamePiece.transform.position.x == x && gamePiece.transform.position.z == z
+                select gamePiece).FirstOrDefault();
+    }
+
+    //True if the active player won, false if the other player won
+    public void playerWon(bool isActivePlayer)
+    {
+        if (isActivePlayer)
+        {
+            gameWon = activePlayer;
+        }
+        else
+        {
+            ChangePlayer();
+            gameWon = activePlayer;
+        }
+    }
+
+
+    private void ChangePlayer()
     {
         if(activePlayer == 1)
         {
