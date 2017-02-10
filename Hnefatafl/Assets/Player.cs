@@ -95,6 +95,11 @@ namespace Assets
             return columnString;
         }
 
+        public void StartPlayer()
+        {
+            socketServer.SendData("make a move<EOF>");
+        }
+
         public void ISendPlayersMove(Vector3[] lastMove)
         {
             if(lastMove.Length == 2)
@@ -104,13 +109,13 @@ namespace Assets
                 //Letter part
                 lastMoveString.Append(NumberConvertedToString((int)lastMove[0].x));
                 //Number part
-                lastMoveString.Append((int)lastMove[0].z);
+                lastMoveString.Append((int)lastMove[0].z+1);
                 //Seperator
                 lastMoveString.Append("-");
                 //Letter part
                 lastMoveString.Append(NumberConvertedToString((int)lastMove[1].x));
                 //Number part
-                lastMoveString.Append((int)lastMove[1].z);
+                lastMoveString.Append((int)lastMove[1].z+1);
                 //EOF
                 lastMoveString.Append("<EOF>");
 

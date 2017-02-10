@@ -22,7 +22,8 @@ public class PlayerControls : MonoBehaviour {
             //TODO add AI connect?
             case Assets.ApplicationModel.GameType.AI_V_AI:
                 player1 = new Assets.AIPlayer(11000);
-                player2 = new Assets.AIPlayer(11000);
+                player2 = new Assets.AIPlayer(11001);
+                
                 break;
             case Assets.ApplicationModel.GameType.AI_V_Player:
                 player1 = new Assets.AIPlayer(11000);
@@ -30,7 +31,7 @@ public class PlayerControls : MonoBehaviour {
                 break;
             case Assets.ApplicationModel.GameType.Player_V_AI:
                 player1 = new Assets.HumanPlayer(1);
-                player2 = new Assets.AIPlayer(11000);
+                player2 = new Assets.AIPlayer(11001);
                 break;
             case Assets.ApplicationModel.GameType.Player_V_Player:
                 player1 = new Assets.HumanPlayer(1);

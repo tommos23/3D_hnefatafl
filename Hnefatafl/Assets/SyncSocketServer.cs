@@ -26,10 +26,11 @@ namespace Assets
             // Dns.GetHostName returns the name of the 
             // host running the application.
             IPHostEntry ipHostInfo = Dns.Resolve(Dns.GetHostName());
-            IPAddress ipAddress = ipHostInfo.AddressList[1];
+            IPAddress ipAddress = ipHostInfo.AddressList[2];
             localEndPoint = new IPEndPoint(ipAddress, port);
 
-            try {
+            try
+            {
                 // Create a TCP/IP socket.
                 listener = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
@@ -87,9 +88,7 @@ namespace Assets
         {
             // Echo the data back to the client.
             byte[] msg = Encoding.ASCII.GetBytes(data);
-
-            handler.Send(msg);
-            handler.Shutdown(SocketShutdown.Both);
+            //handler.SendTo(msg);
         }
 
         public string GetData()

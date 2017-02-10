@@ -2,10 +2,10 @@ Mono path[0] = 'C:/Users/Steff/Documents/GitHub/3D_hnefatafl/Hnefatafl/gameBuild
 Mono path[1] = 'C:/Users/Steff/Documents/GitHub/3D_hnefatafl/Hnefatafl/gameBuild_Data/Mono'
 Mono config path = 'C:/Users/Steff/Documents/GitHub/3D_hnefatafl/Hnefatafl/gameBuild_Data/Mono/etc'
 PlayerConnection initialized from C:/Users/Steff/Documents/GitHub/3D_hnefatafl/Hnefatafl/gameBuild_Data (debug = 0)
-PlayerConnection initialized network socket : 0.0.0.0 55454
-Multi-casting "[IP] 192.168.224.199 [Port] 55454 [Flags] 2 [Guid] 2915312391 [EditorId] 3276808548 [Version] 1048832 [Id] WindowsPlayer(Steff-PC) [Debug] 0" to [225.0.0.222:54997]...
-Started listening to [0.0.0.0:55454]
-PlayerConnection already initialized - listening to [0.0.0.0:55454]
+PlayerConnection initialized network socket : 0.0.0.0 55236
+Multi-casting "[IP] 192.168.224.148 [Port] 55236 [Flags] 2 [Guid] 712739311 [EditorId] 2820965034 [Version] 1048832 [Id] WindowsPlayer(Steff-PC) [Debug] 0" to [225.0.0.222:54997]...
+Started listening to [0.0.0.0:55236]
+PlayerConnection already initialized - listening to [0.0.0.0:55236]
 Initialize engine version: 5.5.0f3 (38b4efef76f0)
 GfxDevice: creating device client; threaded=1
 Direct3D:
@@ -27,21 +27,9 @@ Platform assembly: C:\Users\Steff\Documents\GitHub\3D_hnefatafl\Hnefatafl\gameBu
 Loading C:\Users\Steff\Documents\GitHub\3D_hnefatafl\Hnefatafl\gameBuild_Data\Managed\UnityEngine.PlaymodeTestsRunner.dll into Unity Child Domain
 Platform assembly: C:\Users\Steff\Documents\GitHub\3D_hnefatafl\Hnefatafl\gameBuild_Data\Managed\UnityEngine.Analytics.dll (this message is harmless)
 Loading C:\Users\Steff\Documents\GitHub\3D_hnefatafl\Hnefatafl\gameBuild_Data\Managed\UnityEngine.Analytics.dll into Unity Child Domain
-- Completed reload, in  0.055 seconds
+- Completed reload, in  0.081 seconds
 Platform assembly: C:\Users\Steff\Documents\GitHub\3D_hnefatafl\Hnefatafl\gameBuild_Data\Managed\System.Core.dll (this message is harmless)
 Platform assembly: C:\Users\Steff\Documents\GitHub\3D_hnefatafl\Hnefatafl\gameBuild_Data\Managed\System.dll (this message is harmless)
 desktop: 1366x768 60Hz; virtual: 1366x768 at 0,0
 <RI> Initializing input.
 <RI> Input initialized.
-<RI> Initialized touch support.
-UnloadTime: 25.360483 ms
-Setting up 1 worker threads for Enlighten.
-  Thread -> id: 2a94 -> priority: 1 
-Unloading 4 Unused Serialized files (Serialized files now loaded: 0)
-UnloadTime: 3.695282 ms
-System memory in use before: 17.9 MB.
-System memory in use after: 17.9 MB.
-
-Unloading 7 unused Assets to reduce memory usage. Loaded Objects now: 924.
-Total: 0.527017 ms (FindLiveObjects: 0.072869 ms CreateObjectMapping: 0.047210 ms MarkObjects: 0.322779 ms  DeleteObjects: 0.082105 ms)
-
