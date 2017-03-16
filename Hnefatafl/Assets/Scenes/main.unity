@@ -5397,8 +5397,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1830472827}
   - component: {fileID: 1830472826}
-  - component: {fileID: 1830472825}
   - component: {fileID: 1830472824}
+  - component: {fileID: 1830472825}
   m_Layer: 0
   m_Name: Behaviours
   m_TagString: Untagged
@@ -5417,16 +5417,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c23fb936a5a6d234bac4b63b8258bc72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  whitePiece: {fileID: 1466453459344642, guid: 4e77b5ae290953a4abbc20ce9e6d7687, type: 2}
-  whiteKing: {fileID: 1149423365130668, guid: 34d49d199848d284183a9cb05b379631, type: 2}
-  blackPiece: {fileID: 1107608519367436, guid: 31ba0e372e2ee3240bef8befb88791bb, type: 2}
-  cornerPiece: {fileID: 1191989990864362, guid: 3e692ace38054a84c9e08d0e752dae5d,
-    type: 2}
-  centrePiece: {fileID: 1850759333591768, guid: 58d1f552cc11abe4a9439362c1e846ce,
-    type: 2}
-  lastMove: []
+  gamePieces: []
+  WhitePiece: {fileID: 1466453459344642, guid: 4e77b5ae290953a4abbc20ce9e6d7687, type: 2}
+  WhiteKing: {fileID: 1149423365130668, guid: 34d49d199848d284183a9cb05b379631, type: 2}
+  BlackPiece: {fileID: 1107608519367436, guid: 31ba0e372e2ee3240bef8befb88791bb, type: 2}
   activePlayer: 1
-  guiFont: {fileID: 12800000, guid: 271d67b7a12a1e444822f9b4369e8b3b, type: 3}
+  lastMove: []
+  guiFont: {fileID: 0}
 --- !u!114 &1830472825
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5525,7 +5522,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1830472823}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 3.4875321, y: 7.0840197, z: -7.9414062}
+  m_LocalPosition: {x: -8.14, y: 7.0840197, z: -7.9414062}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}

@@ -5,6 +5,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using UnityEngine;
 
+
 namespace Assets
 {
     interface Player
@@ -15,29 +16,47 @@ namespace Assets
 
     class AIPlayer : Player
     {
-        private static Assets.AsyncSocketServer socketServer;
         private GameObject selectedPiece;
-        private System.Int32 serverPort;
+        private bool listeningForMove = false;
+        private string moveInput = "";
+        private udpReceive udp;
+        private udpSend udps;
 
-        public AIPlayer(System.Int32 _serverPort)
+
+        private GameObject UDPSender;
+        private GameObject UDPReceiver;
+
+
+        public AIPlayer(System.Int32 receivePort, System.Int32 sendPort )
         {
-            serverPort = _serverPort;
-            socketServer = new AsyncSocketServer(serverPort);
+            // instantiate the udp handlers
+            UDPSender = (GameObject)GameObject.Instantiate(Resources.Load("UDPSender"));
+            UDPReceiver = (GameObject)GameObject.Instantiate(Resources.Load("UDPReceiver"));
+
+            // create links to their scripts so we can call functions from them
+            udp = (udpReceive)UDPReceiver.GetComponent(typeof(udpReceive));
+            udps = (udpSend)UDPSender.GetComponent(typeof(udpSend));
+
+            // initialise the ports
+            UDPReceiver.SendMessage("UpdatePort", receivePort);
+            UDPSender.SendMessage("UpdatePort", sendPort);
         }
 
         public void IPlayerMove()
         {
+            /* Listening for a move? If not start */
+            if (!listeningForMove)
+            {
+                udp.StartListening();
+                listeningForMove = true;
+            }
 
-            //socketServer = new AsyncSocketServer(serverPort);
-            //socketServer.checkConnection();
-            AsyncSocketServer.StartListening(serverPort);
-            string moveInput = "";
-            moveInput = getMoveFromSocket();
+            moveInput = udp.getLatestUDPPacket();
 
             if ((moveInput != "") && (moveInput != "q<EOF>"))
             {
 
-                Regex validInput = new Regex("^([a-k]{1})([1-9]|1[0-1])-([a-k]{1})([1-9]|1[0-1])<EOF>$");
+                Regex validInput = new Regex("^([a-k]{1})([0-9]|10)-([a-k]{1})([0-9]|10)<EOF>$");
                 if (validInput.IsMatch(moveInput))
                 {
                     Debug.Log("Pattern Valid");
@@ -45,10 +64,9 @@ namespace Assets
                     int selectedPieceX = StringConvertedToNumber(splitInput[1]) - 1;
                     int selectedPieceZ = Convert.ToInt32(splitInput[2]);
                     Debug.Log("split performed:" + selectedPieceX.ToString() + " " + selectedPieceZ.ToString());
-                    //int selectedPieceX = 7;
-                    // int selectedPieceZ = 5;
 
-                    selectedPiece = PlayerControls._GameManager.selectPiece(selectedPieceX, selectedPieceZ);
+
+                    selectedPiece = PlayerControls.GameManager.selectPiece(selectedPieceX, selectedPieceZ);
 
                     if (selectedPiece != null)
                     {
@@ -56,34 +74,38 @@ namespace Assets
                         int moveToX = StringConvertedToNumber(splitInput[3]) - 1;
                         int moveToZ = Convert.ToInt32(splitInput[4]);
 
-                        //int moveToX = 7;
-                        //int moveToZ = 4;
+    
                         Vector3 moveToCoord = new Vector3(moveToX, 1, moveToZ);
-                        if (!PlayerControls._GameManager.MovePiece(selectedPiece, moveToCoord))
+                        if (!PlayerControls.GameManager.MovePiece(selectedPiece, moveToCoord))
                         {
                             //Invalid move, game lost
                             Debug.Log("invalid move");
-                            PlayerControls._GameManager.playerWon(false);
+                            PlayerControls.GameManager.PlayerWon(false);
+                        }
+                        else
+                        {
+                            //Made a valid move, start listening again when its AI turn
+                            listeningForMove = false;
                         }
                     }
                     else
                     {
                         //Wrong piece selected, game lost
                         Debug.Log("wrong piece selected");
-                        PlayerControls._GameManager.playerWon(false);
+                        PlayerControls.GameManager.PlayerWon(false);
                     }
                 }
                 else
                 {
                     //Pattern does not match, game lost
                     Debug.Log("Pattern does not match");
-                    PlayerControls._GameManager.playerWon(false);
+                    PlayerControls.GameManager.PlayerWon(false);
                 }
 
             }
             // otherwise no message has been recieved and we repeat
         }
-        //}
+    
 
         private int StringConvertedToNumber(string column)
         {
@@ -114,7 +136,7 @@ namespace Assets
 
         public void StartPlayer()
         {
-            //socketServer.SendData("make a move<EOF>");
+            udps.SendMessage("Game Start: Make A Move"); //only send this to the black player.
         }
 
         public void ISendPlayersMove(Vector3[] lastMove)
@@ -123,32 +145,27 @@ namespace Assets
             {
                 //Final result should be in the format: "a1-a1<EOF>"
                 StringBuilder lastMoveString = new StringBuilder();
+
+                // append player number         
+                if (PlayerControls.GameManager.activePlayer == 1) { lastMoveString.Append("White_Move:"); }
+                else if (PlayerControls.GameManager.activePlayer == 2) { lastMoveString.Append("Black_Move:"); }
+
                 //Letter part
-                lastMoveString.Append(NumberConvertedToString((int)lastMove[0].x));
+                lastMoveString.Append(NumberConvertedToString(((int)lastMove[0].x) + 1));
                 //Number part
-                lastMoveString.Append((int)lastMove[0].z + 1);
+                lastMoveString.Append((int)lastMove[0].z);
                 //Seperator
                 lastMoveString.Append("-");
                 //Letter part
-                lastMoveString.Append(NumberConvertedToString((int)lastMove[1].x));
+                lastMoveString.Append(NumberConvertedToString(((int)lastMove[1].x) + 1));
                 //Number part
-                lastMoveString.Append((int)lastMove[1].z + 1);
+                lastMoveString.Append((int)lastMove[1].z);
                 //EOF
                 lastMoveString.Append("<EOF>");
 
                 //Send over socket
-                //socketServer.SendData(lastMoveString.ToString());
+                udps.sendString(lastMoveString.ToString());
             }
-        }
-
-        public string getMoveFromSocket()
-        {
-            string _input = "";
-
-            if (socketServer.isDataAvailable()) { _input = socketServer.popData(); }
-
-            return _input;
-
         }
     }
 
@@ -158,13 +175,9 @@ namespace Assets
         private GameObject SelectedPiece;   // Selected Piece
         public int gameState = 0;           // In this state, the code is waiting for : 0 = Piece selection, 1 = Piece animation
 
-        private static Assets.AsyncSocketServer socketServer;
-        private System.Int32 serverPort = 11020;    // socketfor outgoing info
-
-        public HumanPlayer(int _playerNumber)
+        public HumanPlayer(int playerNumber)
         {
-            playerNumber = _playerNumber;
-            socketServer = new AsyncSocketServer(serverPort);
+            this.playerNumber = playerNumber;
         }
 
         public void IPlayerMove()
@@ -222,7 +235,7 @@ namespace Assets
                         {
                             selectedCoord = new Vector3(_hitInfo.collider.gameObject.transform.position.x, 1, _hitInfo.collider.gameObject.transform.position.z);
                             //Try to move the piece
-                            PlayerControls._GameManager.MovePiece(SelectedPiece, selectedCoord);
+                            PlayerControls.GameManager.MovePiece(SelectedPiece, selectedCoord);
                             SelectedPiece = null;
                             gameState = 0;
                         }
@@ -247,49 +260,9 @@ namespace Assets
             gameState = 1;
         }
 
-        public static string lastPlayerMoveString;
-
-        private string NumberConvertedToString(int column)
-        {
-            string columnString = "";
-            decimal columnNumber = column;
-            while (columnNumber > 0)
-            {
-                decimal currentLetterNumber = (columnNumber - 1) % 26;
-                char currentLetter = (char)(currentLetterNumber + 65);
-                columnString = currentLetter + columnString;
-                columnNumber = (columnNumber - (currentLetterNumber + 1)) / 26;
-            }
-            return columnString;
-        }
-
         public void ISendPlayersMove(Vector3[] lastMove)
         {
-
-            if (lastMove.Length == 2)
-            {
-                //Final result should be in the format: "a1-a1<EOF>"
-                StringBuilder lastMoveString = new StringBuilder();
-                //Letter part
-                lastMoveString.Append(NumberConvertedToString(((int)lastMove[0].x) + 1));
-                //Number part
-                lastMoveString.Append((int)lastMove[0].z);
-                //Seperator
-                lastMoveString.Append("-");
-                //Letter part
-                lastMoveString.Append(NumberConvertedToString(((int)lastMove[1].x) + 1));
-                //Number part
-                lastMoveString.Append((int)lastMove[1].z);
-                //EOF
-                lastMoveString.Append("<EOF>");
-
-
-                lastPlayerMoveString = lastMoveString.ToString();
-                //send over socket
-                //AsyncSocketServer.externalSend();
-
-            }
-
+            
         }
     }
 }
